@@ -13,15 +13,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ariel.bankdemo.bank.BankService;
 import com.ariel.bankdemo.customer.CustomerNotFoundException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperties;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Controller in charge of creating the accounts for customers
+ */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -30,9 +42,21 @@ public class AccountCreationController {
 
     private final BankService bankService;
 
+    @Operation(summary = "Creates an account for one specific customer.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Account Created for the specified customer",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Long.class)) }),
+            @ApiResponse(responseCode = "404", description = "Customer not found for specified id",
+                    content = @Content)
+    })
     @PostMapping
     @ResponseBody
-    Long createAccountForCustomer(@PathVariable("customerId") Long customerId, @Valid @RequestBody AccountCreationRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    Long createAccountForCustomer(
+            @Parameter(description = "The customer identifier") @PathVariable("customerId") Long customerId,
+            @Parameter(description = "Additional attributes for account creation") @Valid @RequestBody AccountCreationRequest request
+    ) {
         try {
             return bankService.createNewAccountForCustomer(customerId, request.initialCredit).getId();
         } catch (CustomerNotFoundException e) {
