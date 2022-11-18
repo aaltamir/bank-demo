@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,5 +63,16 @@ class TransactionServiceTest {
                 .returns(NOW_UTC, Transaction::getExecutionTime);
 
         assertThat(createdTransaction).isSameAs(aTransaction);
+    }
+
+    @Test
+    void getTransactionsForAccount() {
+        when(transactionRepository.findAllByAccount(any())).thenReturn(Collections.singletonList(aTransaction));
+
+        final List<Transaction> transactions = transactionService.findTransactionsForAccount(testAccount);
+
+        verify(transactionRepository).findAllByAccount(testAccount);
+
+        assertThat(transactions).containsExactly(aTransaction);
     }
 }

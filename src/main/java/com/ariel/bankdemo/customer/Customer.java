@@ -25,7 +25,8 @@ public class Customer {
     private String surname;
 
     @Builder
-    public Customer(final String name, final String surname) {
+    public Customer(final Long id, final String name, final String surname) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
     }

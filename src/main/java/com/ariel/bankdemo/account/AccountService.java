@@ -1,6 +1,7 @@
 package com.ariel.bankdemo.account;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -63,6 +64,16 @@ public class AccountService {
     @Transactional
     public Account getAccountForBalanceUpdate(final Long accountId) throws AccountNotFoundException {
         return accountRepository.findByIdIs(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
+    }
+
+    /**
+     * Get all the accounts for one specified customer.
+     * @param customer The customer for which we want all the accounts
+     * @return The accounts for the specified customer. It can be empty.
+     */
+    @Transactional
+    public List<Account> getAccountsForCustomer(final Customer customer) {
+        return accountRepository.findAllByCustomer(customer);
     }
 
 }

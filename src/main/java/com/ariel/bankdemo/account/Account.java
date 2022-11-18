@@ -32,7 +32,8 @@ public class Account {
     private BigDecimal balance;
 
     @Builder
-    public Account(final Customer customer, final BigDecimal initialBalance) {
+    public Account(final Long id, final Customer customer, final BigDecimal initialBalance) {
+        this.id = id;
         this.customer = customer;
         this.balance = initialBalance;
     }

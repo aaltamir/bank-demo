@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -91,6 +93,17 @@ class AccountServiceTest {
 
         assertThatThrownBy(() -> accountService.getAccountForBalanceUpdate(10L))
                 .isInstanceOf(AccountNotFoundException.class);
+    }
+
+    @Test
+    void getAllAccountsForCustomer() {
+        final Account oneAccount = getTestAccount();
+        when(accountRepository.findAllByCustomer(any())).thenReturn(Collections.singletonList(oneAccount));
+
+        final List<Account> accounts = accountService.getAccountsForCustomer(testCustomer);
+
+        verify(accountRepository).findAllByCustomer(testCustomer);
+        assertThat(accounts).containsExactly(oneAccount);
     }
 
     private Account getTestAccount() {

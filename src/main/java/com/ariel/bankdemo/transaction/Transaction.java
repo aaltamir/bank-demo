@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * A transaction executed in one specific account
+ * A transaction executed in one specific account. It can be a debit or credit depending on the amount.
  */
 @Entity
 @Getter
@@ -37,7 +37,8 @@ public class Transaction {
     private LocalDateTime executionTime;
 
     @Builder
-    public Transaction(final Account account, final BigDecimal amount, final LocalDateTime executionTime) {
+    public Transaction(final Long id, final Account account, final BigDecimal amount, final LocalDateTime executionTime) {
+        this.id = id;
         this.account = account;
         this.amount = amount;
         this.executionTime = executionTime;
