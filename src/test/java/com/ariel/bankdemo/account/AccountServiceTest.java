@@ -74,15 +74,23 @@ class AccountServiceTest {
     }
 
     @Test
-    void getAccountForBalanceUpdate() {
+    void getAccountForBalanceUpdate() throws AccountNotFoundException {
         final Account oneAccount = getTestAccount();
         when(accountRepository.findByIdIs(anyLong())).thenReturn(Optional.of(oneAccount));
 
-        final Account account = accountService.getAccountForBalanceUpdate(10L).orElseThrow();
+        final Account account = accountService.getAccountForBalanceUpdate(10L);
 
         verify(accountRepository).findByIdIs(10L);
 
         assertThat(account).isSameAs(oneAccount);
+    }
+
+    @Test
+    void getAccountForBalanceUpdateFailsWhenNoAccount() {
+        when(accountRepository.findByIdIs(anyLong())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> accountService.getAccountForBalanceUpdate(10L))
+                .isInstanceOf(AccountNotFoundException.class);
     }
 
     private Account getTestAccount() {
